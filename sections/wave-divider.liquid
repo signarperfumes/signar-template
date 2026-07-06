@@ -1,0 +1,160 @@
+{% comment %}
+  SIGNAR Wave Divider Section
+  - Lightweight SVG wave animation
+  - Infinite loop, black color
+  - Sits perfectly above footer
+{% endcomment %}
+
+<section class="signar-wave" data-section-id="{{ section.id }}">
+  <div class="wave-container">
+    <div class="wave">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,100 C240,150 480,50 720,100 C960,150 1200,50 1440,100 L1440,200 L0,200 Z" 
+              fill="{{ section.settings.wave_color }}" />
+        <path d="M0,120 C240,170 480,70 720,120 C960,170 1200,70 1440,120 L1440,200 L0,200 Z" 
+              fill="{{ section.settings.wave_color }}" 
+              opacity="{{ section.settings.wave_opacity | divided_by: 100.0 }}" />
+      </svg>
+    </div>
+  </div>
+
+  <style>
+    /* ============================================
+       SIGNAR Wave Divider Styles
+       ============================================ */
+    .signar-wave {
+      position: relative;
+      height: {{ section.settings.wave_height }}px;
+      overflow: hidden;
+      background: {{ section.settings.background_color }};
+    }
+
+    .wave-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+      animation: wave-animation {{ section.settings.animation_speed }}s linear infinite;
+    }
+
+    .wave svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes wave-animation {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Pause animation on hover (optional) */
+    {% if section.settings.pause_on_hover %}
+      .signar-wave:hover .wave {
+        animation-play-state: paused;
+      }
+    {% endif %}
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .signar-wave {
+        height: {{ section.settings.wave_height_mobile }}px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Wave Divider",
+  "tag": "section",
+  "class": "signar-wave-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Wave Settings"
+    },
+    {
+      "type": "color",
+      "id": "wave_color",
+      "label": "Wave color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "wave_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Second wave opacity",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "wave_height",
+      "min": 100,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Wave height (desktop)",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "wave_height_mobile",
+      "min": 50,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Wave height (mobile)",
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "Animation Settings"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "unit": "s",
+      "label": "Animation speed",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause animation on hover",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wave Divider"
+    }
+  ]
+}
+{% endschema %}
