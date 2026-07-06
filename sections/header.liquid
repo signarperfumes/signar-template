@@ -1,0 +1,700 @@
+{% comment %}
+  SIGNAR Header Section
+  - Sticky navigation with transparent-to-solid transition
+  - Logo centered, navigation left, utilities right
+  - Mobile hamburger with accordion menu
+  - Fully editable via Shopify Theme Editor
+{% endcomment %}
+
+<section class="signar-header" id="signarHeader" data-section-id="{{ section.id }}">
+  <nav class="header-nav" role="navigation" aria-label="Main navigation">
+    <!-- Left: Navigation -->
+    <div class="nav-left">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+      
+      <ul class="nav-menu" id="navMenu">
+        {% for link in section.settings.menu.links %}
+          {% if link.links.size > 0 %}
+            <li class="nav-item has-dropdown">
+              <a href="{{ link.url }}" class="nav-link">
+                {{ link.title }}
+                <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </a>
+              <ul class="dropdown-menu">
+                {% for child_link in link.links %}
+                  <li><a href="{{ child_link.url }}" class="dropdown-link">{{ child_link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a href="{{ link.url }}" class="nav-link">{{ link.title }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Center: Logo -->
+    <div class="nav-center">
+      <a href="{{ routes.root_url }}" class="logo-link" aria-label="{{ shop.name }} home">
+        {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | image_url: width: 200 }}" 
+               alt="{{ shop.name }}" 
+               class="logo-image"
+               width="{{ section.settings.logo_width }}"
+               height="auto">
+        {% else %}
+          <span class="logo-text">{{ shop.name | upcase }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Right: Utilities -->
+    <div class="nav-right">
+      <a href="{{ routes.search_url }}" class="utility-btn" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </a>
+      
+      <a href="{{ routes.account_url }}" class="utility-btn" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </a>
+      
+      <a href="{{ routes.cart_url }}" class="utility-btn cart-btn" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+          <path d="M3 6h18"></path>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        {% if cart.item_count > 0 %}
+          <span class="cart-count">{{ cart.item_count }}</span>
+        {% endif %}
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+  
+  <!-- Mobile Menu Sidebar -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Mobile navigation">
+    <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </svg>
+    </button>
+    
+    <ul class="mobile-nav-list">
+      {% for link in section.settings.menu.links %}
+        {% if link.links.size > 0 %}
+          <li class="mobile-nav-item has-accordion">
+            <button class="mobile-nav-toggle" aria-expanded="false">
+              {{ link.title }}
+              <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <ul class="mobile-submenu">
+              {% for child_link in link.links %}
+                <li><a href="{{ child_link.url }}" class="mobile-submenu-link">{{ child_link.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% else %}
+          <li class="mobile-nav-item">
+            <a href="{{ link.url }}" class="mobile-nav-link">{{ link.title }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    
+    <div class="mobile-menu-footer">
+      <p>{{ section.settings.mobile_footer_text }}</p>
+    </div>
+  </div>
+
+  <style>
+    /* ============================================
+       SIGNAR Header Styles
+       ============================================ */
+    .signar-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9000;
+      transition: all 0.4s ease;
+      background: transparent;
+    }
+
+    .signar-header.scrolled {
+      background: rgba(0, 0, 0, 0.97);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-nav {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 1.5rem 4rem;
+      transition: padding 0.4s ease;
+    }
+
+    .signar-header.scrolled .header-nav {
+      padding: 1rem 4rem;
+    }
+
+    /* Navigation Left */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-white);
+      text-decoration: none;
+      position: relative;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+      opacity: 0.7;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--color-white);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .dropdown-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item.has-dropdown:hover .dropdown-icon {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--color-white);
+      min-width: 200px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      padding: 1rem 0;
+      margin-top: 1rem;
+      list-style: none;
+    }
+
+    .nav-item.has-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-link {
+      display: block;
+      padding: 0.8rem 2rem;
+      color: var(--color-black);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-link:hover {
+      background: var(--color-gray);
+    }
+
+    /* Logo Center */
+    .nav-center {
+      justify-self: center;
+    }
+
+    .logo-link {
+      text-decoration: none;
+      display: block;
+    }
+
+    .logo-image {
+      display: block;
+      max-height: 40px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--color-white);
+      transition: opacity 0.3s ease;
+    }
+
+    .logo-text:hover {
+      opacity: 0.7;
+    }
+
+    /* Utilities Right */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .utility-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-white);
+      text-decoration: none;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .utility-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .cart-btn {
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--color-white);
+      color: var(--color-black);
+      font-size: 0.65rem;
+      font-weight: 600;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hamburger Button */
+    .hamburger-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      padding: 10px 8px;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .hamburger-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 100%;
+      height: 1.5px;
+      background: var(--color-white);
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    .hamburger-btn.active .hamburger-line:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+
+    .hamburger-btn.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger-btn.active .hamburger-line:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      z-index: 9999;
+    }
+
+    .mobile-menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: var(--color-black);
+      z-index: 10000;
+      transform: translateX(-100%);
+      transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+      padding: 6rem 2rem 2rem;
+      overflow-y: auto;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-white);
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .mobile-menu-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      margin-bottom: 3rem;
+    }
+
+    .mobile-nav-item {
+      border-bottom: 1px solid #222;
+    }
+
+    .mobile-nav-link {
+      display: block;
+      padding: 1.5rem 0;
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--color-white);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: padding-left 0.3s ease;
+    }
+
+    .mobile-nav-link:hover {
+      padding-left: 1rem;
+    }
+
+    .mobile-nav-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1.5rem 0;
+      background: none;
+      border: none;
+      color: var(--color-white);
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: padding-left 0.3s ease;
+    }
+
+    .mobile-nav-toggle:hover {
+      padding-left: 1rem;
+    }
+
+    .accordion-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-nav-toggle[aria-expanded="true"] .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .mobile-submenu {
+      list-style: none;
+      padding-left: 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .mobile-submenu.active {
+      max-height: 500px;
+    }
+
+    .mobile-submenu-link {
+      display: block;
+      padding: 1rem 0;
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      color: var(--color-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .mobile-submenu-link:hover {
+      color: var(--color-white);
+    }
+
+    .mobile-menu-footer {
+      padding-top: 2rem;
+      border-top: 1px solid #222;
+      color: var(--color-muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .header-nav {
+        padding: 1.2rem 2rem;
+      }
+
+      .signar-header.scrolled .header-nav {
+        padding: 1rem 2rem;
+      }
+
+      .nav-menu {
+        gap: 1.5rem;
+      }
+
+      .nav-link {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-nav {
+        padding: 0.8rem 1rem;
+        grid-template-columns: auto 1fr auto;
+      }
+
+      .signar-header.scrolled .header-nav {
+        padding: 0.8rem 1rem;
+      }
+
+      .nav-left .nav-menu {
+        display: none;
+      }
+
+      .hamburger-btn {
+        display: flex;
+      }
+
+      .logo-text {
+        font-size: 1.3rem;
+        letter-spacing: 0.25em;
+      }
+
+      .utility-btn {
+        width: 36px;
+        height: 36px;
+      }
+
+      .utility-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    // Header scroll effect
+    const header = document.getElementById('signarHeader');
+    const scrollThreshold = 80;
+
+    const handleScroll = () => {
+      if (window.scrollY > scrollThreshold) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    // Mobile menu toggle
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    const toggleMobileMenu = () => {
+      const isActive = mobileMenu.classList.contains('active');
+      
+      if (isActive) {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('no-scroll');
+      } else {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        hamburgerBtn.classList.add('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('no-scroll');
+      }
+    };
+
+    hamburgerBtn.addEventListener('click', toggleMobileMenu);
+    mobileMenuClose.addEventListener('click', toggleMobileMenu);
+    mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+
+    // Mobile accordion menus
+    document.querySelectorAll('.mobile-nav-toggle').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        const submenu = toggle.nextElementSibling;
+        
+        toggle.setAttribute('aria-expanded', !isExpanded);
+        
+        if (!isExpanded) {
+          submenu.classList.add('active');
+        } else {
+          submenu.classList.remove('active');
+        }
+      });
+    });
+
+    // Close mobile menu on link click
+    document.querySelectorAll('.mobile-nav-link, .mobile-submenu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu();
+      });
+    });
+
+    // Escape key closes mobile menu
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+        toggleMobileMenu();
+      }
+    });
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "section",
+  "class": "signar-header-section",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "Recommended: PNG with transparent background, max height 40px"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 100,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 150
+    },
+    {
+      "type": "header",
+      "content": "Navigation Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Use Shopify navigation to create your menu structure"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Menu"
+    },
+    {
+      "type": "text",
+      "id": "mobile_footer_text",
+      "label": "Mobile menu footer text",
+      "default": "LUXURY FRAGRANCES · EST. PAKISTAN"
+    }
+  ]
+}
+{% endschema %}
