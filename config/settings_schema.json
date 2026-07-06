@@ -1,0 +1,25 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "SIGNAR Luxury",
+    "theme_version": "1.0.0",
+    "theme_author": "SIGNAR"
+  },
+  {
+    "name": "colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#ffffff"
+      }
+    ]
+  }
+]
