@@ -1,0 +1,234 @@
+{% comment %}
+  SIGNAR Trust Badges Section
+  - Minimalist SVG icons
+  - Fully editable blocks (add/remove badges)
+  - Clean, centered layout
+{% endcomment %}
+
+<section class="signar-trust-badges" data-section-id="{{ section.id }}">
+  {% if section.settings.title != blank or section.settings.subtitle != blank %}
+    <div class="signar-trust-badges__header section-header">
+      {% if section.settings.subtitle != blank %}
+        <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="signar-trust-badges__grid">
+    {% for block in section.blocks %}
+      <div class="signar-trust-badge reveal" {{ block.shopify_attributes }}>
+        <div class="signar-trust-badge__icon">
+          {% case block.settings.icon %}
+            {% when 'authentic' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            {% when 'shipping' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+            {% when 'secure' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            {% when 'support' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            {% when 'leaf' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+              </svg>
+            {% when 'star' %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+          {% endcase %}
+        </div>
+        {% if block.settings.title != blank %}
+          <h3 class="signar-trust-badge__title">{{ block.settings.title }}</h3>
+        {% endif %}
+        {% if block.settings.description != blank %}
+          <p class="signar-trust-badge__description">{{ block.settings.description }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <style>
+    .signar-trust-badges {
+      padding: var(--spacing-xl) var(--spacing-lg);
+      background: var(--color-white);
+    }
+
+    .signar-trust-badges__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .signar-trust-badge {
+      text-align: center;
+      padding: var(--spacing-md);
+      transition: transform var(--transition-smooth);
+    }
+
+    .signar-trust-badge:hover {
+      transform: translateY(-5px);
+    }
+
+    .signar-trust-badge__icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-black);
+    }
+
+    .signar-trust-badge__icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .signar-trust-badge__title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+      color: var(--color-black);
+    }
+
+    .signar-trust-badge__description {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 1024px) {
+      .signar-trust-badges__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .signar-trust-badges {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+      .signar-trust-badges__grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Trust Badges",
+  "tag": "section",
+  "class": "signar-trust-badges-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Why Choose Us"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "The SIGNAR Promise"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Trust Badge",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "authentic", "label": "Authentic (Shield)" },
+            { "value": "shipping", "label": "Free Shipping (Truck)" },
+            { "value": "secure", "label": "Secure Payment (Lock)" },
+            { "value": "support", "label": "Expert Support (Chat)" },
+            { "value": "leaf", "label": "Cruelty-Free (Leaf)" },
+            { "value": "star", "label": "Premium Quality (Star)" }
+          ],
+          "default": "authentic"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Authentic Quality"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "100% genuine fragrances crafted with premium ingredients from around the world."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Trust Badges",
+      "blocks": [
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "authentic",
+            "title": "Authentic Quality",
+            "description": "100% genuine fragrances crafted with premium ingredients from around the world."
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "shipping",
+            "title": "Free Shipping",
+            "description": "Complimentary nationwide delivery on all orders above PKR 5,000."
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "secure",
+            "title": "Secure Payment",
+            "description": "Your transactions are protected with industry-leading SSL encryption."
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "support",
+            "title": "Expert Support",
+            "description": "Dedicated fragrance consultants available to guide your selection."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
