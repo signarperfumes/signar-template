@@ -1,0 +1,307 @@
+{% comment %}
+  SIGNAR Product Grid Section
+  - Clean, minimalist product cards
+  - Hover zoom effect on images
+  - 'Quick Add' button with AJAX cart integration
+{% endcomment %}
+
+<section class="signar-product-grid" data-section-id="{{ section.id }}">
+  <div class="signar-product-grid__header section-header">
+    {% if section.settings.subtitle != blank %}
+      <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+    {% if section.settings.title != blank %}
+      <h2 class="section-title">{{ section.settings.title }}</h2>
+    {% endif %}
+  </div>
+
+  <div class="signar-product-grid__container" style="grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);">
+    {% for product in section.settings.product_list %}
+      <div class="signar-product-card reveal">
+        <a href="{{ product.url }}" class="signar-product-card__link">
+          <div class="signar-product-card__image-wrapper">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 800 }}" 
+                   alt="{{ product.title }}" 
+                   class="signar-product-card__image"
+                   loading="lazy"
+                   width="800"
+                   height="1000">
+            {% endif %}
+            {% if product.available == false %}
+              <span class="signar-product-card__badge">Sold Out</span>
+            {% elsif product.compare_at_price > product.price %}
+              <span class="signar-product-card__badge">Sale</span>
+            {% endif %}
+          </div>
+          <div class="signar-product-card__info">
+            <h3 class="signar-product-card__title">{{ product.title }}</h3>
+            <p class="signar-product-card__category">
+              {% for collection in product.collections limit: 1 %}
+                {{ collection.title }}
+              {% endfor %}
+            </p>
+            <p class="signar-product-card__price">{{ product.price | money }}</p>
+          </div>
+        </a>
+        
+        {% if product.available %}
+          <button class="signar-product-card__quick-add" 
+                  data-product-id="{{ product.id }}"
+                  data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+            <span>Quick Add</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v14M5 12h14"></path>
+            </svg>
+          </button>
+        {% else %}
+          <button class="signar-product-card__quick-add" disabled style="opacity: 0.5; cursor: not-allowed;">
+            <span>Sold Out</span>
+          </button>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <style>
+    .signar-product-grid {
+      padding: var(--spacing-xl) var(--spacing-lg);
+      background: var(--color-gray);
+    }
+
+    .signar-product-grid__container {
+      display: grid;
+      gap: var(--spacing-md);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .signar-product-card {
+      background: var(--color-white);
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+    }
+
+    .signar-product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .signar-product-card__link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .signar-product-card__image-wrapper {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      background: var(--color-gray);
+    }
+
+    .signar-product-card__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-slow);
+    }
+
+    .signar-product-card:hover .signar-product-card__image {
+      transform: scale(1.08);
+    }
+
+    .signar-product-card__badge {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: var(--color-black);
+      color: var(--color-white);
+      padding: 0.4rem 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .signar-product-card__info {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .signar-product-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      color: var(--color-black);
+    }
+
+    .signar-product-card__category {
+      font-size: 0.75rem;
+      color: #888;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .signar-product-card__price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--color-black);
+    }
+
+    .signar-product-card__quick-add {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.2rem;
+      background: var(--color-black);
+      color: var(--color-white);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transform: translateY(100%);
+      transition: transform var(--transition-smooth);
+      z-index: 3;
+    }
+
+    .signar-product-card:hover .signar-product-card__quick-add {
+      transform: translateY(0);
+    }
+
+    .signar-product-card__quick-add:hover {
+      background: var(--color-dark-gray);
+    }
+
+    .signar-product-card__quick-add.added {
+      background: #2d5016;
+    }
+
+    @media (max-width: 1024px) {
+      .signar-product-grid__container {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .signar-product-grid {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+      .signar-product-grid__container {
+        grid-template-columns: 1fr !important;
+        gap: var(--spacing-sm);
+      }
+      .signar-product-card__quick-add {
+        transform: translateY(0);
+        position: relative;
+      }
+    }
+  </style>
+
+  <script>
+    document.querySelectorAll('.signar-product-card__quick-add:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const variantId = btn.dataset.variantId;
+        const originalText = btn.querySelector('span').textContent;
+        
+        btn.querySelector('span').textContent = 'Adding...';
+        
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: variantId, quantity: 1 })
+          });
+          
+          if (response.ok) {
+            btn.querySelector('span').textContent = 'Added ✓';
+            btn.classList.add('added');
+            
+            // Update cart count in header
+            const cartCountEl = document.querySelector('.cart-count');
+            if (cartCountEl) {
+              const currentCount = parseInt(cartCountEl.textContent) || 0;
+              cartCountEl.textContent = currentCount + 1;
+              cartCountEl.style.display = 'flex';
+            }
+            
+            // Show toast if available
+            const toast = document.getElementById('toast');
+            if (toast) {
+              toast.textContent = 'Added to bag';
+              toast.classList.add('show');
+              setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+            
+            setTimeout(() => {
+              btn.querySelector('span').textContent = originalText;
+              btn.classList.remove('added');
+            }, 1500);
+          }
+        } catch (err) {
+          btn.querySelector('span').textContent = 'Error';
+          setTimeout(() => {
+            btn.querySelector('span').textContent = originalText;
+          }, 1500);
+        }
+      });
+    });
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "tag": "section",
+  "class": "signar-product-grid-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Curated Selection"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Fragrances"
+    },
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "label": "Products",
+      "limit": 12
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid"
+    }
+  ]
+}
+{% endschema %}
