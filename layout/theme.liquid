@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#000000">
-  
+  {{ 'style.css' | asset_url | stylesheet_tag }}
   <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
   
   {% if page_description %}
@@ -274,5 +274,6 @@
 
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
   </script>
+{{ 'script.js' | asset_url | script_tag }}
 </body>
 </html>
